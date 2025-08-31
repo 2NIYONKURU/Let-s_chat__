@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Let's Chat</title>
+  <!-- Your Local Favicon -->
+  <link rel="icon" href="file:///C:/Users/NIYONKURU%20Patrick/OneDrive/Documents/new/favicon.png.png" type="image/png" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #1a1a1a;
+      color: white;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      border-left: 1px solid #363636;
+      border-right: 1px solid #363636;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid #444;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      background: linear-gradient(45deg, #fff, #ddd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .action-icons span {
+      font-size: 22px;
+      margin-left: 16px;
+      cursor: pointer;
+    }
+
+    /* Main Content */
+    main {
+      flex: 1;
+      background-color: #262626;
+      padding-bottom: 60px;
+    }
+
+    .page {
+      display: none;
+      padding: 10px 0;
+    }
+
+    .active {
+      display: block;
+    }
+
+    /* Messages List */
+    .messages-container {
+      padding: 10px;
+    }
+
+    .chat-item {
+      display: flex;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid #363636;
+      cursor: pointer;
+    }
+
+    .chat-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin-right: 14px;
+    }
+
+    .chat-avatar img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .chat-info {
+      flex: 1;
+    }
+
+    .chat-username {
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .chat-preview {
+      font-size: 14px;
+      color: #ccc;
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chat-time {
+      font-size: 12px;
+      color: #999;
+    }
+
+    /* Chat View */
+    .chat-view {
+      padding: 10px;
+    }
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      border-bottom: 1px solid #363636;
+    }
+
+    .back-btn {
+      font-size: 24px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    .chat-header-username {
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .chat-messages {
+      min-height: 70vh;
+      max-height: 70vh;
+      overflow-y: auto;
+      padding: 10px 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .message {
+      max-width: 70%;
+      padding: 12px 16px;
+      margin: 6px 0;
+      border-radius: 18px;
+      font-size: 14px;
+      line-height: 1.4;
+      word-wrap: break-word;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .message-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 4px;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .message-header img {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      margin-right: 6px;
+      object-fit: cover;
+    }
+
+    .sent {
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 5px;
+    }
+
+    .received {
+      background-color: #363636;
+      color: white;
+      align-self: flex-start;
+      border-bottom-left-radius: 5px;
+    }
+
+    .chat-input-container {
+      display: flex;
+      padding: 12px;
+      background-color: #262626;
+      border-top: 1px solid #363636;
+    }
+
+    .chat-input {
+      flex: 1;
+      background-color: #363636;
+      border: none;
+      color: white;
+      padding: 12px 16px;
+      border-radius: 24px;
+      margin-right: 10px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .send-btn {
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      color: white;
+      width: 52px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    /* Settings & Profile */
+    .settings {
+      padding: 20px;
+    }
+
+    .setting-item {
+      padding: 16px;
+      border-bottom: 1px solid #363636;
+      font-size: 16px;
+      cursor: pointer;
+      color: white;
+    }
+
+    .danger-btn {
+      color: #ed4956;
+      text-align: center;
+      padding: 16px;
+      font-size: 16px;
+      margin-top: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .profile-avatar-large {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin: 20px auto;
+      display: block;
+      border: 3px solid transparent;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      padding: 2px;
+    }
+
+    .profile-avatar-large img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    /* Navigation Bar */
+    nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      justify-content: space-around;
+      background-color: #262626;
+      border-top: 1px solid #363636;
+      padding: 10px 0;
+      z-index: 100;
+    }
+
+    .nav-item {
+      font-size: 24px;
+      cursor: pointer;
+      color: #aaa;
+    }
+
+    .nav-item.active {
+      color: white;
+    }
+
+    /* Auth Page */
+    .auth-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background-color: #262626;
+      padding: 20px;
+    }
+
+    .auth-box {
+      width: 100%;
+      max-width: 350px;
+      background: #363636;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .auth-logo {
+      font-size: 32px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .auth-input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 6px;
+      background: #444;
+      color: white;
+      font-size: 14px;
+    }
+
+    .auth-input:focus {
+      outline: 1px solid #f09433;
+    }
+
+    .auth-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      margin: 15px 0;
+      cursor: pointer;
+    }
+
+    .switch-link {
+      color: #0095f6;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Authentication Page -->
+  <div id="auth-page" class="auth-container">
+    <div class="auth-box">
+      <div class="auth-logo">Let's Chat</div>
+      <input type="text" id="username-input" class="auth-input" placeholder="Username" />
+      <input type="password" id="password-input" class="auth-input" placeholder="Password" />
+      <button id="auth-btn" class="auth-btn">Log In</button>
+      <div style="text-align:center; margin-top:10px; font-size:14px; color:#ccc;">
+        Don't have an account? <span class="switch-link" id="toggle-auth">Sign up</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div id="app" style="display:none;">
+    <div class="container">
+      <header>
+        <div class="logo">Let's Chat</div>
+        <div class="action-icons">
+          <span>📸</span>
+          <span>🔍</span>
+        </div>
+      </header>
+
+      <main>
+        <!-- Messages Page -->
+        <div id="messages-page" class="page active">
+          <div class="messages-container" id="chats-list">
+            <!-- All signed-up users will appear here -->
+          </div>
+        </div>
+
+        <!-- Chat View -->
+        <div id="chat-view" class="page" style="display:none;">
+          <div class="chat-header">
+            <span class="back-btn" id="back-to-chats">←</span>
+            <span class="chat-header-username" id="chat-username">User</span>
+          </div>
+          <div class="chat-messages" id="chat-messages"></div>
+          <div class="chat-input-container">
+            <input type="text" class="chat-input" id="message-input" placeholder="Type a message..." />
+            <div class="send-btn" id="send-message">➤</div>
+          </div>
+        </div>
+
+        <!-- Profile Page -->
+        <div id="profile-page" class="page">
+          <div style="text-align:center; padding:30px 20px;">
+            <div class="profile-avatar-large" id="profile-avatar-container">
+              <!-- Avatar set by JS -->
+            </div>
+            <h2 id="profile-username" style="margin:10px 0; font-size:20px;"></h2>
+            <p style="color:#999; margin-bottom:20px;">You're on Let's Chat</p>
+            <button id="edit-profile-btn" style="background:linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color:white; border:none; padding:10px 20px; border-radius:6px; cursor:pointer; font-size:14px;">
+              Edit Profile
+            </button>
+          </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div id="settings-page" class="page">
+          <div class="settings">
+            <div class="setting-item" id="go-to-profile">Edit Profile</div>
+            <div class="setting-item">Privacy</div>
+            <div class="setting-item">Security</div>
+            <div class="setting-item">Notifications</div>
+            <div class="setting-item">Help</div>
+            <div class="danger-btn" id="logout-btn">Log Out</div>
+            <div class="danger-btn" id="delete-account">Delete Account</div>
+          </div>
+        </div>
+      </main>
+
+      <nav>
+        <div class="nav-item active" data-page="messages-page">💬</div>
+        <div class="nav-item" data-page="profile-page">👤</div>
+        <div class="nav-item" data-page="settings-page">⚙️</div>
+      </nav>
+    </div>
+  </div>
+
+  <script>
+    // 🧹 Reset all data on first load (comment this line if you want to keep data)
+    localStorage.removeItem('letschat-db');
+
+    // Fresh database
+    let DB = {
+      users: [],
+      messages: []
+    };
+
+    function saveDB() {
+      localStorage.setItem('letschat-db', JSON.stringify(DB));
+    }
+
+    let currentUser = null;
+
+    // DOM Elements
+    const authPage = document.getElementById('auth-page');
+    const app = document.getElementById('app');
+    const authBtn = document.getElementById('auth-btn');
+    const toggleAuth = document.getElementById('toggle-auth');
+    const usernameInput = document.getElementById('username-input');
+    const passwordInput = document.getElementById('password-input');
+    const navItems = document.querySelectorAll('.nav-item');
+    const pages = document.querySelectorAll('.page');
+    const chatsList = document.getElementById('chats-list');
+    const chatView = document.getElementById('chat-view');
+    const backToChats = document.getElementById('back-to-chats');
+    const chatMessages = document.getElementById('chat-messages');
+    const messageInput = document.getElementById('message-input');
+    const sendMessageBtn = document.getElementById('send-message');
+    const chatUsername = document.getElementById('chat-username');
+
+    // Profile & Settings
+    const profilePage = document.getElementById('profile-page');
+    const profileAvatarContainer = document.getElementById('profile-avatar-container');
+    const profileUsername = document.getElementById('profile-username');
+    const editProfileBtn = document.getElementById('edit-profile-btn');
+    const goProfileBtn = document.getElementById('go-to-profile');
+    const logoutBtn = document.getElementById('logout-btn');
+    const deleteAccountBtn = document.getElementById('delete-account');
+
+    // Mode: true = Login, false = Signup
+    let isLoginMode = true;
+
+    // Toggle between Login and Signup
+    toggleAuth.addEventListener('click', () => {
+      isLoginMode = !isLoginMode;
+      authBtn.textContent = isLoginMode ? 'Log In' : 'Sign Up';
+      toggleAuth.textContent = isLoginMode ? 'Sign up' : 'Log in';
+    });
+
+    // Auth Button
+    authBtn.addEventListener('click', () => {
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!username || !password) {
+        alert('Please enter both fields');
+        return;
+      }
+
+      if (!isLoginMode) {
+        const exists = DB.users.some(u => u.username === username && u.password === password);
+        if (exists) {
+          alert('Account with this username already exists.');
+          return;
+        }
+        const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=dc2743&color=fff&size=128`;
+        DB.users.push({ username, password, avatar });
+        saveDB();
+        alert(`Welcome, ${username}!`);
+      }
+
+      const user = DB.users.find(u => u.username === username && u.password === password);
+      if (user) {
+        currentUser = user;
+        authPage.style.display = 'none';
+        app.style.display = 'block';
+
+        // ✅ Always show messages list (home) after login
+        showPage('messages-page');
+        loadAllUsers();
+        updateProfileDisplay();
+      } else {
+        alert('Invalid username or password');
+      }
+    });
+
+    // Press Enter
+    passwordInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') authBtn.click();
+    });
+
+    // Navigation
+    navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const pageId = item.getAttribute('data-page');
+        showPage(pageId);
+        if (pageId === 'messages-page') loadAllUsers();
+        if (pageId === 'profile-page') updateProfileDisplay();
+      });
+    });
+
+    // Helper to show a page
+    function showPage(pageId) {
+      pages.forEach(p => p.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+      navItems.forEach(i => i.classList.remove('active'));
+      const activeNavItem = document.querySelector(`[data-page="${pageId}"]`);
+      if (activeNavItem) activeNavItem.classList.add('active');
+    }
+
+    // ✅ Load ALL signed-up users (except current user)
+    function loadAllUsers() {
+      chatsList.innerHTML = '';
+      const otherUsers = DB.users.filter(u => !(u.username === currentUser.username && u.password === currentUser.password));
+
+      if (otherUsers.length === 0) {
+        chatsList.innerHTML = '<p style="color:#888; padding:20px; text-align:center;">No other users yet.</p>';
+        return;
+      }
+
+      otherUsers.forEach(user => {
+        const chat = DB.messages
+          .filter(m => (m.from === currentUser.username && m.to === user.username) ||
+                       (m.to === currentUser.username && m.from === user.username))
+          .sort((a, b) => b.timestamp - a.timestamp);
+
+        const lastMsg = chat[0];
+
+        const chatItem = document.createElement('div');
+        chatItem.className = 'chat-item';
+        chatItem.innerHTML = `
+          <div class="chat-avatar"><img src="${user.avatar}" alt="Avatar"></div>
+          <div class="chat-info">
+            <div class="chat-username">${user.username}</div>
+            <div class="chat-preview">${lastMsg ? (lastMsg.from === currentUser.username ? 'You: ' : '') + lastMsg.text : 'Start a chat'}</div>
+          </div>
+          <div class="chat-time">${lastMsg ? formatTime(lastMsg.timestamp) : 'Now'}</div>
+        `;
+        chatItem.addEventListener('click', () => openChat(user));
+        chatsList.appendChild(chatItem);
+      });
+    }
+
+    function formatTime(timestamp) {
+      const now = new Date();
+      const date = new Date(timestamp);
+      const diff = (now - date) / 1000;
+      if (diff < 60) return 'Now';
+      const mins = Math.floor(diff / 60);
+      if (mins < 60) return `${mins}m`;
+      const hours = Math.floor(mins / 60);
+      if (hours < 24) return `${hours}h`;
+      return Math.floor(hours / 24) + 'd';
+    }
+
+    // ✅ Open Chat with Sender Image in Messages
+    function openChat(user) {
+      chatUsername.textContent = user.username;
+      chatMessages.innerHTML = '';
+      showPage('chat-view');
+
+      const chat = DB.messages
+        .filter(m => (m.from === currentUser.username && m.to === user.username) ||
+                     (m.to === currentUser.username && m.from === user.username))
+        .sort((a, b) => a.timestamp - b.timestamp);
+
+      chat.forEach(msg => {
+        const sender = DB.users.find(u => u.username === msg.from) || {
+          username: msg.from,
+          avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(msg.from)}&background=dc2743&color=fff&size=128`
+        };
+
+        const msgEl = document.createElement('div');
+        msgEl.className = `message ${msg.from === currentUser.username ? 'sent' : 'received'}`;
+        msgEl.innerHTML = `
+          <div class="message-header">
+            <img src="${sender.avatar}" alt="Avatar" />
+            <span>${sender.username}</span>
+          </div>
+          <div class="message-text">${msg.text}</div>
+        `;
+        chatMessages.appendChild(msgEl);
+      });
+
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Send Message
+    sendMessageBtn.addEventListener('click', () => {
+      const text = messageInput.value.trim();
+      if (!text) return;
+
+      const recipientName = chatUsername.textContent;
+      const message = {
+        from: currentUser.username,
+        to: recipientName,
+        text: text,
+        timestamp: Date.now()
+      };
+
+      DB.messages.push(message);
+      saveDB();
+      messageInput.value = '';
+
+      const recipient = DB.users.find(u => u.username === recipientName) || {
+        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(recipientName)}&background=dc2743&color=fff&size=128`
+      };
+
+      const msgEl = document.createElement('div');
+      msgEl.className = 'message sent';
+      msgEl.innerHTML = `
+        <div class="message-header">
+          <img src="${currentUser.avatar}" alt="You" />
+          <span>You</span>
+        </div>
+        <div class="message-text">${text}</div>
+      `;
+      chatMessages.appendChild(msgEl);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    });
+
+    messageInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') sendMessageBtn.click();
+    });
+
+    // Back to Chats
+    backToChats.addEventListener('click', () => {
+      showPage('messages-page');
+      loadAllUsers();
+    });
+
+    // Profile & Edit
+    function updateProfileDisplay() {
+      profileUsername.textContent = currentUser.username;
+      profileAvatarContainer.innerHTML = '';
+      const img = document.createElement('img');
+      img.src = currentUser.avatar;
+      img.alt = 'Avatar';
+      profileAvatarContainer.appendChild(img);
+    }
+
+    editProfileBtn.addEventListener('click', () => {
+      const newUrl = prompt('Enter new profile image URL (leave empty for default)');
+      let newAvatar;
+      if (!newUrl || newUrl.trim() === '') {
+        newAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.username)}&background=dc2743&color=fff&size=128`;
+      } else {
+        newAvatar = newUrl.trim();
+      }
+
+      DB.users = DB.users.map(u => {
+        if (u.username === currentUser.username && u.password === currentUser.password) {
+          return { ...u, avatar: newAvatar };
+        }
+        return u;
+      });
+
+      currentUser.avatar = newAvatar;
+      saveDB();
+      updateProfileDisplay();
+      alert('Profile updated!');
+    });
+
+    goProfileBtn.addEventListener('click', () => {
+      showPage('profile-page');
+      updateProfileDisplay();
+    });
+
+    // Logout
+    logoutBtn.addEventListener('click', () => {
+      if (confirm('Log out?')) {
+        app.style.display = 'none';
+        authPage.style.display = 'flex';
+        usernameInput.value = '';
+        passwordInput.value = '';
+      }
+    });
+
+    // Delete Account
+    deleteAccountBtn.addEventListener('click', () => {
+      if (confirm('Delete your account? This cannot be undone.')) {
+        DB.users = DB.users.filter(u => !(u.username === currentUser.username && u.password === currentUser.password));
+        DB.messages = DB.messages.filter(m => 
+          !(m.from === currentUser.username && m.to === currentUser.username) &&
+          !(m.to === currentUser.username && m.from === currentUser.username)
+        );
+        saveDB();
+        alert('Account deleted.');
+        app.style.display = 'none';
+        authPage.style.display = 'flex';
+      }
+    });
+  </script>
+</body>
+</html>
